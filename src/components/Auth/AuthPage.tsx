@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -28,13 +30,24 @@ const AuthPage: React.FC<AuthPageProps> = ({ initialTab = "login" }) => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login, signup, isLoading } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would handle authentication
-    // For now, just navigate to dashboard
-    navigate("/dashboard");
+    setError("");
+
+    try {
+      if (activeTab === "login") {
+        await login(email, password);
+      } else {
+        await signup(name, email, password, company);
+      }
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -82,6 +95,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ initialTab = "login" }) => {
               </TabsList>
 
               <TabsContent value="login">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+                    {error}
+                  </div>
+                )}
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
@@ -132,14 +150,19 @@ const AuthPage: React.FC<AuthPageProps> = ({ initialTab = "login" }) => {
                       Remember me for 30 days
                     </Label>
                   </div>
-                  <Button type="submit" className="w-full">
-                    Sign In
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? "Signing In..." : "Sign In"}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </form>
               </TabsContent>
 
               <TabsContent value="signup">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+                    {error}
+                  </div>
+                )}
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
@@ -209,8 +232,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ initialTab = "login" }) => {
                       </a>
                     </Label>
                   </div>
-                  <Button type="submit" className="w-full">
-                    Create Account
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? "Creating Account..." : "Create Account"}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </form>

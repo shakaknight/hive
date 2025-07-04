@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Card,
@@ -33,6 +34,7 @@ import {
   Users,
 } from "lucide-react";
 import AnalyticsVisualization from "./AnalyticsVisualization";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardPageProps {
   userName?: string;
@@ -46,8 +48,8 @@ interface DashboardPageProps {
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({
-  userName = "John Doe",
-  userEmail = "john.doe@example.com",
+  userName,
+  userEmail,
   teamMembers = [
     { id: "1", name: "Sarah Johnson", email: "sarah.j@example.com" },
     { id: "2", name: "Michael Chen", email: "michael.c@example.com" },
@@ -56,6 +58,16 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
 }) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [activeTab, setActiveTab] = useState("overview");
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const displayName = userName || user?.name || "User";
+  const displayEmail = userEmail || user?.email || "user@example.com";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -78,12 +90,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
                 <Button variant="ghost" className="flex items-center space-x-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`}
-                      alt={userName}
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`}
+                      alt={displayName}
                     />
-                    <AvatarFallback>{userName.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden md:inline">{userName}</span>
+                  <span className="hidden md:inline">{displayName}</span>
                   <ChevronDown size={16} />
                 </Button>
               </DropdownMenuTrigger>
@@ -91,7 +103,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
