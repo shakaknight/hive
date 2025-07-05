@@ -9,6 +9,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -32,6 +33,22 @@ import {
   PieChart,
   Settings,
   Users,
+  BarChart3,
+  TrendingUp,
+  Eye,
+  MousePointer,
+  ArrowRight,
+  Plus,
+  MoreHorizontal,
+  ChevronLeft,
+  Home,
+  Activity,
+  Target,
+  Zap,
+  Database,
+  HelpCircle,
+  UserPlus,
+  Bell,
 } from "lucide-react";
 import AnalyticsVisualization from "./AnalyticsVisualization";
 import { useAuth } from "@/contexts/AuthContext";
@@ -57,7 +74,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   ],
 }) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("journeys");
+  const [selectedJourney, setSelectedJourney] = useState(
+    "Site - View - Homepage",
+  );
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -69,302 +89,417 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
     navigate("/");
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-blue-600">Heap</h1>
-            <nav className="hidden md:flex space-x-4">
-              <Button variant="ghost">Dashboard</Button>
-              <Button variant="ghost">Events</Button>
-              <Button variant="ghost">Users</Button>
-              <Button variant="ghost">Reports</Button>
-            </nav>
-          </div>
+  const journeySteps = [
+    {
+      id: 1,
+      name: "Site - View - Homepage",
+      users: 3334,
+      percentage: 35.2,
+      conversionRate: 14.3,
+      color: "bg-green-500",
+    },
+    {
+      id: 2,
+      name: "View - PDP (Any)",
+      users: 2890,
+      percentage: 33.6,
+      conversionRate: 8.2,
+      color: "bg-green-400",
+    },
+    {
+      id: 3,
+      name: "PDP - Click - Add to Cart",
+      users: 477,
+      percentage: 64.4,
+      conversionRate: null,
+      color: "bg-green-500",
+    },
+    {
+      id: 4,
+      name: "PDP - Click - Checkout",
+      users: 260,
+      percentage: 53.8,
+      conversionRate: null,
+      color: "bg-green-400",
+    },
+    {
+      id: 5,
+      name: "Cart - Click - Checkout",
+      users: 307,
+      percentage: null,
+      conversionRate: null,
+      color: "bg-green-500",
+    },
+    {
+      id: 6,
+      name: "Cart - Complete Purchase",
+      users: 140,
+      percentage: null,
+      conversionRate: null,
+      color: "bg-green-400",
+    },
+  ];
 
-          <div className="flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`}
-                      alt={displayName}
-                    />
-                    <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <span className="hidden md:inline">{displayName}</span>
-                  <ChevronDown size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+  const userInteractions = [
+    {
+      id: 1,
+      action: 'Click "See More"',
+      description: "shopcompany.com",
+      percentage: 21,
+      users: "2K users total",
+      dropOff: 4.5,
+    },
+    {
+      id: 2,
+      action: 'Click element with link "/collections/leashes"',
+      description: "shopcompany.com",
+      percentage: 18,
+      users: "1.7K users total",
+      dropOff: 1.4,
+    },
+    {
+      id: 3,
+      action: 'Click "Open navigation menu"',
+      description: "shopcompany.com",
+      percentage: 14,
+      users: "1.3K users total",
+      dropOff: 6.7,
+    },
+    {
+      id: 4,
+      action: 'Click element with link "/collections/collars"',
+      description: "shopcompany.com",
+      percentage: 13,
+      users: "1.2K users total",
+      dropOff: 1.3,
+    },
+    {
+      id: 5,
+      action: 'Click element with link "/collections/harnesses"',
+      description: "shopcompany.com",
+      percentage: 11,
+      users: "1K users total",
+      dropOff: 0.51,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-white flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+        {/* Logo */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-orange-500 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm">H</span>
+            </div>
+            <span className="font-semibold text-lg">Heap</span>
           </div>
         </div>
-      </header>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4">
+          <div className="space-y-1">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+              Analysis
+            </div>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <BarChart3 className="mr-3 h-4 w-4" />
+              Overview
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <TrendingUp className="mr-3 h-4 w-4" />
+              Dashboards
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <BarChart3 className="mr-3 h-4 w-4" />
+              All charts
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Target className="mr-3 h-4 w-4" />
+              Analyze
+            </Button>
+
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 mt-6">
+              Data Management
+            </div>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Activity className="mr-3 h-4 w-4" />
+              Explore events
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Database className="mr-3 h-4 w-4" />
+              Definitions
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Eye className="mr-3 h-4 w-4" />
+              Visual labeling
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Zap className="mr-3 h-4 w-4" />
+              Live data feed
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Users className="mr-3 h-4 w-4" />
+              User sessions
+            </Button>
+
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3 mt-6">
+              Administration
+            </div>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Settings className="mr-3 h-4 w-4" />
+              Updates
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <Database className="mr-3 h-4 w-4" />
+              Integrations
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <HelpCircle className="mr-3 h-4 w-4" />
+              Get support
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left font-normal"
+            >
+              <UserPlus className="mr-3 h-4 w-4" />
+              Account
+              <ChevronDown className="ml-auto h-4 w-4" />
+            </Button>
+          </div>
+        </nav>
+
+        {/* Bottom section */}
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            <span className="text-sm text-gray-600">Production</span>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        {/* Dashboard Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-            <p className="text-gray-500">View and analyze your user data</p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4 md:mt-0">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full sm:w-auto">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : "Select date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-
-            <Button variant="outline" className="w-full sm:w-auto">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
-
-            <Button variant="outline" className="w-full sm:w-auto">
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
-          </div>
-        </div>
-
-        {/* Dashboard Tabs */}
-        <Tabs
-          defaultValue="overview"
-          className="mb-6"
-          onValueChange={setActiveTab}
-        >
-          <TabsList className="grid grid-cols-4 md:grid-cols-5 lg:w-[600px]">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="funnels">Funnels</TabsTrigger>
-            <TabsTrigger value="heatmaps">Heatmaps</TabsTrigger>
-            <TabsTrigger value="journeys">User Journeys</TabsTrigger>
-            <TabsTrigger value="reports" className="hidden md:block">
-              Reports
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">
-                Total Users
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">24,532</div>
-              <p className="text-xs text-green-500 flex items-center mt-1">
-                +12.5% from last month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">
-                Active Sessions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">1,429</div>
-              <p className="text-xs text-green-500 flex items-center mt-1">
-                +5.2% from last week
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">
-                Conversion Rate
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">3.6%</div>
-              <p className="text-xs text-red-500 flex items-center mt-1">
-                -0.8% from last month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">
-                Avg. Session Duration
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">2m 45s</div>
-              <p className="text-xs text-green-500 flex items-center mt-1">
-                +18s from last month
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main Visualization */}
-        <Card className="mb-6">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <div>
-              <CardTitle>User Activity</CardTitle>
-              <CardDescription>User interactions over time</CardDescription>
+      <main className="flex-1 flex flex-col">
+        {/* Top Header */}
+        <header className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500">Usage over time</span>
+                <span className="text-sm text-gray-500">•</span>
+                <span className="text-sm text-gray-500">Funnel</span>
+                <span className="text-sm text-gray-500">•</span>
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800"
+                >
+                  Journeys
+                </Badge>
+                <span className="text-sm text-gray-500">•</span>
+                <span className="text-sm text-gray-500">Retention</span>
+                <span className="text-sm text-gray-500">•</span>
+                <span className="text-sm text-gray-500">More</span>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
               <Button variant="outline" size="sm">
-                <LineChart className="h-4 w-4 mr-1" />
-                Line
+                <Filter className="h-4 w-4 mr-2" />
+                Filter
               </Button>
-              <Button variant="outline" size="sm">
-                <PieChart className="h-4 w-4 mr-1" />
-                Pie
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <AnalyticsVisualization
-              type={
-                activeTab === "heatmaps"
-                  ? "heatmap"
-                  : activeTab === "funnels"
-                    ? "funnel"
-                    : activeTab === "journeys"
-                      ? "journey"
-                      : "chart"
-              }
-              height={400}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Secondary Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Users */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="h-5 w-5 mr-2" />
-                Recent Users
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {teamMembers.map((member) => (
-                  <div key={member.id} className="flex items-center space-x-3">
-                    <Avatar>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Avatar className="h-6 w-6">
                       <AvatarImage
-                        src={
-                          member.avatar ||
-                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.name}`
-                        }
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`}
+                        alt={displayName}
                       />
-                      <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>{displayName.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <div>
-                      <p className="font-medium">{member.name}</p>
-                      <p className="text-sm text-gray-500">{member.email}</p>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </header>
+
+        {/* Journey Content */}
+        <div className="flex-1 flex">
+          {/* Journey Funnel */}
+          <div className="flex-1 p-6">
+            <div className="mb-6">
+              <div className="flex items-center space-x-2 mb-2">
+                <Button variant="ghost" size="sm" className="text-gray-500">
+                  <Home className="h-4 w-4" />
+                </Button>
+                <span className="text-sm text-gray-500">{selectedJourney}</span>
+              </div>
+            </div>
+
+            {/* Funnel Visualization */}
+            <div className="space-y-4">
+              {journeySteps.map((step, index) => (
+                <div key={step.id} className="flex items-center space-x-4">
+                  {/* Step Bar */}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+                        <span className="text-sm font-medium">{step.name}</span>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Button variant="ghost" size="sm">
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <div className="h-16 bg-gray-100 rounded-lg overflow-hidden">
+                        <div
+                          className={`h-full ${step.color} flex items-center justify-center text-white font-medium`}
+                          style={{
+                            width: `${Math.min(step.percentage || 100, 100)}%`,
+                          }}
+                        >
+                          {step.users.toLocaleString()} users
+                        </div>
+                      </div>
+                      {step.percentage && (
+                        <div className="absolute top-2 right-2 text-xs text-gray-600">
+                          {step.percentage}%
+                        </div>
+                      )}
+                      {step.conversionRate && (
+                        <div className="absolute bottom-2 left-2 text-xs text-gray-600">
+                          {step.conversionRate}%
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Sidebar - User Interactions */}
+          <div className="w-96 border-l border-gray-200 bg-gray-50">
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium text-gray-900">
+                  Other events after
+                </h3>
+                <span className="text-sm text-gray-500">
+                  Site - View - Homepage
+                </span>
               </div>
-              <Button variant="ghost" className="w-full mt-4">
-                View All Users
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Top Events */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Top Events</CardTitle>
-              <CardDescription>Most frequent user interactions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex-1">
-                    <p className="font-medium">Page View: /homepage</p>
-                    <p className="text-sm text-gray-500">12,453 occurrences</p>
-                  </div>
-                  <div className="w-24 h-8 bg-blue-100 rounded-full overflow-hidden">
-                    <div
-                      className="bg-blue-500 h-full"
-                      style={{ width: "80%" }}
-                    ></div>
-                  </div>
+              <p className="text-sm text-gray-600 mb-4">
+                Most common interactions after Site - View - Homepage
+              </p>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <div className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                 </div>
-
-                <div className="flex justify-between items-center">
-                  <div className="flex-1">
-                    <p className="font-medium">Button Click: Sign Up</p>
-                    <p className="text-sm text-gray-500">8,721 occurrences</p>
-                  </div>
-                  <div className="w-24 h-8 bg-blue-100 rounded-full overflow-hidden">
-                    <div
-                      className="bg-blue-500 h-full"
-                      style={{ width: "65%" }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <div className="flex-1">
-                    <p className="font-medium">Form Submit: Contact</p>
-                    <p className="text-sm text-gray-500">5,342 occurrences</p>
-                  </div>
-                  <div className="w-24 h-8 bg-blue-100 rounded-full overflow-hidden">
-                    <div
-                      className="bg-blue-500 h-full"
-                      style={{ width: "45%" }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <div className="flex-1">
-                    <p className="font-medium">Page View: /pricing</p>
-                    <p className="text-sm text-gray-500">4,128 occurrences</p>
-                  </div>
-                  <div className="w-24 h-8 bg-blue-100 rounded-full overflow-hidden">
-                    <div
-                      className="bg-blue-500 h-full"
-                      style={{ width: "35%" }}
-                    ></div>
-                  </div>
-                </div>
+                <span>Include these users in the journey</span>
               </div>
-              <Button variant="ghost" className="w-full mt-4">
-                View All Events
-              </Button>
-            </CardContent>
-          </Card>
+            </div>
+
+            <div className="p-4 space-y-4">
+              {userInteractions.map((interaction) => (
+                <div key={interaction.id} className="space-y-2">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                        <MousePointer className="h-4 w-4 text-gray-400" />
+                        <span className="text-sm font-medium">
+                          {interaction.action}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-500 ml-6">
+                        {interaction.description}
+                      </p>
+                      <div className="flex items-center justify-between ml-6 mt-1">
+                        <div className="text-xs text-gray-600">
+                          <span className="font-medium">
+                            {interaction.percentage}% of users did this
+                          </span>
+                          <br />
+                          <span className="text-gray-500">
+                            ({interaction.users})
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          <span className="font-medium">
+                            {interaction.dropOff}% took a different path or
+                            dropped off
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
     </div>
